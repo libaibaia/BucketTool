@@ -1,10 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "BucketVultool",
+    "name": "BucketTool",
     "version": "0.0.1",
-    "description": "BucketVultool",
+    "description": "BucketTool - 云存储安全检测浏览器扩展",
     "action": {
         "default_popup": "popup/index.html"
+    },
+    "icons": {
+        "128": "icons/Secure.png"
     },
     "permissions": [
         "storage",
