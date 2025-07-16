@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BucketTool 检测日志</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        #logbox {
+            background: #fff;
+            margin: 0;
+            padding: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            min-height: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #2d7be5;
+            margin-bottom: 12px;
+        }
+
+        .logline {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+            word-break: break-all;
+            transition: background 0.2s;
+        }
+
+        .logline:hover {
+            background: #f0f6ff;
+        }
+
+        .logline .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+
+        .logline .tag-vendor {
+            background: #eaf6ff;
+            color: #2d7be5;
+        }
+
+        .logline .tag-type {
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+
+        .logline .tag-path {
+            background: #eafaf1;
+            color: #16a085;
+        }
+
+        .logline .tag-status {
+            background: #fff6e5;
+            color: #e67e22;
+        }
+
+        .logline .tag-found {
+            background: #eafaf1;
+            color: #27ae60;
+        }
+
+        .logline .tag-notfound {
+            background: #fbeee6;
+            color: #c0392b;
+        }
+
+        #start-detect {
+            margin-left: 18px;
+            padding: 4px 18px;
+            background: linear-gradient(90deg, #2d7be5 60%, #16a085 100%);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(45, 123, 229, 0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        #start-detect:hover {
+            background: linear-gradient(90deg, #16a085 60%, #2d7be5 100%);
+            box-shadow: 0 4px 12px rgba(45, 123, 229, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="logbox">
+        <h2>检测日志</h2>
+        <div style="margin-bottom: 12px;">
+            <label><input type="checkbox" class="vendor-checkbox" value="aliyun" checked> 阿里云</label>
+            <label style="margin-left: 10px;"><input type="checkbox" class="vendor-checkbox" value="tencent" checked>
+                腾讯云</label>
+            <label style="margin-left: 10px;"><input type="checkbox" class="vendor-checkbox" value="huawei" checked>
+                华为云</label>
+            <label style="margin-left: 10px;"><input type="checkbox" class="vendor-checkbox" value="AmazonS3" checked>
+                AWS S3</label>
+            <button id="start-detect" style="margin-left: 18px; padding: 2px 10px;">开始检测</button>
+        </div>
+        <div id="log"></div>
+    </div>
+    <script src="log.js"></script>
+</body>
+
+</html>
