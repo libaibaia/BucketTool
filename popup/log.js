@@ -95,7 +95,6 @@ ${escapeHtml(msg.response || '')}</pre></details>
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message)
     if (message && message.type === 'bucketvul-log') {
         addLog(message.msg);
     }
