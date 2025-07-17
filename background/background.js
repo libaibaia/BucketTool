@@ -39,6 +39,7 @@ chrome.webRequest.onCompleted.addListener(
                     .map(item => item.type)
             );
             const resultArr = await detectBucketVul(url, { checkAcl: aclFlag, checkPolicy: policyFlag });
+            let newVulFound = false;
             for (const result of resultArr) {
                 if (detectedTypes.has(result.type)) continue;
                 const newItem = {
@@ -52,9 +53,10 @@ chrome.webRequest.onCompleted.addListener(
                     source: '被动'
                 };
                 history.unshift(newItem);
+                newVulFound = true;
             }
             chrome.storage.local.set({ bucketVulHistory: history }, () => {
-                if (chrome && chrome.action && chrome.action.setBadgeText) {
+                if (newVulFound && chrome && chrome.action && chrome.action.setBadgeText) {
                     chrome.action.setBadgeText({ text: '●' });
                     chrome.action.setBadgeBackgroundColor && chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
                 }
@@ -198,7 +200,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
                     }
                 }
                 chrome.storage.local.set({ bucketVulHistory: history }, () => {
-                    if (chrome && chrome.action && chrome.action.setBadgeText) {
+                    if (history.length !== (res.bucketVulHistory || []).length && chrome && chrome.action && chrome.action.setBadgeText) {
                         chrome.action.setBadgeText({ text: '●' });
                         chrome.action.setBadgeBackgroundColor && chrome.action.setBadgeBackgroundColor({ color: '#e74c3c' });
                     }
