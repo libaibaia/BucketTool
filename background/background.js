@@ -20,6 +20,19 @@ function getHostFromUrl(url) {
     }
 }
 
+function matchBlacklistHost(host, list) {
+    if (!Array.isArray(list)) return false;
+    const h = String(host || '').toLowerCase();
+    return list.some(item => {
+        const e = String(item || '').trim().toLowerCase();
+        if (!e) return false;
+        if (e.startsWith('*.')) {
+            return h.endsWith(e.slice(1));
+        }
+        return h === e || h.endsWith('.' + e);
+    });
+}
+
 // 被动检测
 chrome.webRequest.onCompleted.addListener(
     async (details) => {
@@ -27,10 +40,13 @@ chrome.webRequest.onCompleted.addListener(
         // 跳过扩展自身和非 http/https 请求
         if (!url.startsWith('http://') && !url.startsWith('https://')) return;
         if (details.tabId < 0) return;
-        chrome.storage.local.get(['bucketVulHistory', 'flagAcl', 'flagPolicy'], async (res) => {
+        chrome.storage.local.get(['bucketVulHistory', 'flagAcl', 'flagPolicy', 'detectBlacklist'], async (res) => {
             let history = res.bucketVulHistory || [];
             const aclFlag = res.flagAcl ?? true;
             const policyFlag = res.flagPolicy ?? true;
+            const bl = res.detectBlacklist || [];
+            const host = getHostFromUrl(url);
+            if (matchBlacklistHost(host, bl)) return;
             // 只检测未检测过的类型
             const vendor = detectVendor(url);
             const detectedTypes = new Set(
@@ -132,9 +148,16 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             sendLog('未输入URL，检测取消');
             return;
         }
-        await openLogWindow();
-        sendLog({ event: 'start', url: targetUrl });
-        chrome.storage.local.get(['flagAcl', 'flagPolicy', 'bucketVulHistory'], async (res) => {
+        const host = getHostFromUrl(targetUrl);
+        chrome.storage.local.get(['flagAcl', 'flagPolicy', 'bucketVulHistory', 'detectBlacklist'], async (res) => {
+            const bl = res.detectBlacklist || [];
+            if (matchBlacklistHost(host, bl)) {
+                await openLogWindow();
+                sendLog('目标在黑名单，跳过检测');
+                return;
+            }
+            await openLogWindow();
+            sendLog({ event: 'start', url: targetUrl });
             const aclFlag = res.flagAcl ?? true;
             const policyFlag = res.flagPolicy ?? true;
             sendLog({ event: 'params', acl: aclFlag, policy: policyFlag });
@@ -174,7 +197,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
                         });
                         if (result.found) {
                             foundAny = true;
-                            // 写入历史
                             const exists = history.some(item =>
                                 getHostFromUrl(item.url) === getHostFromUrl(targetUrl) &&
                                 item.type === result.type &&
@@ -216,4 +238,4 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             chrome.action.setBadgeText({ text: '' });
         }
     }
-}); 
+});

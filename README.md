@@ -45,3 +45,12 @@ BucketTool 是一款浏览器扩展，用于检测主流云存储桶（如阿里
 ---
 
 如有建议或问题，欢迎反馈！
+
+## 更新记录
+
+- 2025-11-27
+  - 新增：检测黑名单（持久化）。在 `chrome.storage.local.detectBlacklist` 维护黑名单列表，支持域名与 URL（自动提取 host），以及通配符后缀 `*.example.com`。
+  - 使用方式，点击进入扩展选项，在黑名单输入框中输入HOST或 URL
+  ![alt text](image.png)
+  ![alt text](image-1.png)
+
